@@ -1,5 +1,9 @@
 #include <mayhem/mayhem.hpp>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <misc/stb_image.h>
+#include "mayhem.hpp"
+
 
 namespace mhy {
 
@@ -57,7 +61,7 @@ namespace mhy {
     }
 
 
-    inline const std::string& GLRenderer::getError() const {
+    const std::string& GLRenderer::getError() const {
         return info[1];
     }
 
@@ -130,12 +134,12 @@ namespace mhy {
     }
 
 
-    inline const int& GLRenderer::getVersionMajor() const { 
+    const int& GLRenderer::getVersionMajor() const { 
         return version[0]; 
     }
 
 
-    inline const int& GLRenderer::getVersionMinor() const { 
+    const int& GLRenderer::getVersionMinor() const { 
         return version[1]; 
     }
 
@@ -188,6 +192,13 @@ namespace mhy {
     void Shader::use() const {
         glUseProgram(program);
     }
+
+
+    const int &Shader::getUniform(const std::string &name) const{
+        auto attr { uniforms[name] };
+        return attr.second;
+    }
+
 
     mhy::Shader::~Shader() {
         glDeleteProgram(program);
@@ -271,7 +282,8 @@ namespace mhy {
     }
 
 
-    void Shader::setUniform(const std::string &name, float *data, GLsizei count) {
+    template<typename T>
+    void Shader::setUniform(const std::string &name, T *data, GLsizei count) {
         auto attr { uniforms[name] };
         switch(attr.first) {
             case FLOAT:
@@ -289,8 +301,86 @@ namespace mhy {
             case MAT4:
                 glUniformMatrix4fv(attr.second, count, false, data);
                 break;
+            case SAMPLER2D:
+                glUniform1iv(attr.second, count, data);
+                break;
         }
     }
 
+
+    Texture::Texture(const char *imgPath, int internalFormat, int destFormat, GLenum type, bool useMipmap, int mipLevel, int border){
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        unsigned char* img = stbi_load(imgPath, &width, &height, &nrChannel, 0);
+        setError("");
+        if(img) {
+            _unit = unit++;
+            glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, destFormat, type, img);
+            if(useMipmap) glGenerateMipmap(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        } else {
+            setError("Texture Failed to load. Please make sure the path is correct");
+        }
+    }
+
+
+    void Texture::setWrap(int s, int t) const {
+        bind();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, t);
+        unbind();
+    }
+
+
+    void Texture::setFilter(int min, int mag) const {
+        bind();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
+        unbind();
+    }
+
+
+    void Texture::bind() const {
+        glActiveTexture(GL_TEXTURE0 + _unit);
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
+
+
+    void Texture::unbind() const {
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+
+    void Texture::setError(const std::string& msg) {
+        error = msg;
+    }
+
+
+    const int& Texture::getWidth() const {
+        return width;
+    }
+
+
+    const int& Texture::getHeight() const {
+        return height;
+    }
+
+
+    const int& Texture::getChannel() const {
+        return nrChannel;
+    }
+
+
+    const int& Texture::getUnit() const {
+        return _unit;
+    }
+
+
+    const std::string& Texture::getError() const {
+        return error;
+    }
+
+    int Texture::unit = 0;
 
 }

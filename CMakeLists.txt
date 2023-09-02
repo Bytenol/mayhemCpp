@@ -20,10 +20,12 @@ add_subdirectory(lib/glfw)
 add_subdirectory(lib/glm)
 add_subdirectory(lib/mayhem)
 
+add_subdirectory(project/small)
+
 if(GIT_PUSH_READY)
     message("Cmake building files for github commit")
-    add_subdirectory(project/small)
 else()
     message("Cmake building file for offline commit")
     add_subdirectory(scratch)
+    add_subdirectory(tutorial/learn_opengl)
 endif()

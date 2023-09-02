@@ -63,7 +63,8 @@ namespace mhy {
         bool loadFromString(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
         void use() const;
         const std::string& getError() const;
-        void setUniform(const std::string& name, float* data, GLsizei count = 1);
+        template<typename T>void setUniform(const std::string& name, T* data, GLsizei count = 1);
+        const int& getUniform(const std::string& name) const;
         ~Shader();
 
     private:
@@ -87,6 +88,31 @@ namespace mhy {
         bool initProgram();
         void initVariables(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
+    };
+
+
+    class Texture {
+
+    public:
+        Texture() = default;
+        Texture(const char* imgPath, int internalFormat, int destFormat, GLenum type, bool useMipmap = false, int mipLevel = 0, int border = 0);
+        void setWrap(int s, int t) const;
+        void setFilter(int min, int mag) const;
+        void bind() const;
+        void unbind() const;
+        const std::string& getError() const;
+        const int& getWidth() const;
+        const int& getHeight() const;
+        const int& getChannel() const;
+        const int& getUnit() const;
+
+    private:
+        unsigned texture;
+        int width, height, nrChannel, _unit;
+        std::string error;
+        void setError(const std::string& msg);
+
+        static int unit;
     };
 
 }

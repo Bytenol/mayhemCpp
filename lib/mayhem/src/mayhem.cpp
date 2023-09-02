@@ -193,8 +193,8 @@ namespace mhy {
     }
 
 
-    const int &Shader::getUniform(const std::string &name) const{
-        return uniforms[name].second;
+    const int &Shader::getUniform(const std::string &name) const {
+        return 0;
     }
 
 

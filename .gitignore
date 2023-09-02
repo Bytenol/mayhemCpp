@@ -14,10 +14,10 @@ cmake-build-debug/
 build/
 
 #scratch folder path
-scratch/
+# scratch/
 
-#tutorial folder path
-tutorial/
+# #tutorial folder path
+# tutorial/
 
 # Compiled Object files
 *.slo

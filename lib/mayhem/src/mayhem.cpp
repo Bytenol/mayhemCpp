@@ -2,7 +2,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <misc/stb_image.h>
-#include "mayhem.hpp"
 
 
 namespace mhy {
@@ -195,8 +194,7 @@ namespace mhy {
 
 
     const int &Shader::getUniform(const std::string &name) const{
-        auto attr { uniforms[name] };
-        return attr.second;
+        return uniforms[name].second;
     }
 
 

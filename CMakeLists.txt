@@ -23,9 +23,9 @@ add_executable(chp1_window "src/chapter 1/window.cpp")
 add_executable(chp1_triangle "src/chapter 1/triangle.cpp")
 add_executable(chp1_ripple_mesh "src/chapter 1/ripple_mesh.cpp")
 
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+# set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+# set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+# include(CPack)
 
 
 target_link_libraries(chp1_window glad glfw)

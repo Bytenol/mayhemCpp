@@ -1,0 +1,3 @@
+Debug for currentShader in canvas 
+Add basic rectangle shader to canvas
+Create Flappy bird game

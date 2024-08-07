@@ -49,10 +49,10 @@
 #include "gtest/internal/gtest-port.h"
 
 #if GTEST_OS_CYGWIN || GTEST_OS_LINUX || GTEST_OS_MAC
-#include <unistd.h>  // NOLINT
+#deps <unistd.h>  // NOLINT
 #endif
 #if GTEST_OS_QURT
-#include <qurt_event.h>
+#deps <qurt_event.h>
 #endif
 
 // Silence C4800 (C4800: 'int *const ': forcing value

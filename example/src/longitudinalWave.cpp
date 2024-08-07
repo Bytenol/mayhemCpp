@@ -4,11 +4,8 @@
  * @brief A longitudinal wave animation using opengl and glsl
  * @version 0.1
  * @date 2024-05-01
- * 
- * @todo implement imgui in the program
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
  */
 
 #include <glm/vec3.hpp>
@@ -176,10 +173,8 @@ class Application : public Canvas {
 glm::mat4 Application::projectionMatrix = glm::mat4(1.0f);
 
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]) {
     Application window{ 400, 500, "Longitudinal Wave" };
-
     window.start();
 
     return 0;

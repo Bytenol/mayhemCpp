@@ -29,7 +29,7 @@
 
 // Type and function utilities for implementing parameterized tests.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -783,7 +783,7 @@ class TypeParameterizedTestSuiteRegistry {
 }  // namespace internal
 
 // Forward declarations of ValuesIn(), which is implemented in
-// include/gtest/gtest-param-test.h.
+// deps/gtest/gtest-param-test.h.
 template <class Container>
 internal::ParamGenerator<typename Container::value_type> ValuesIn(
     const Container& container);

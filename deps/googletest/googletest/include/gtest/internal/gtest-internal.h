@@ -32,7 +32,7 @@
 // This header file declares functions and macros used internally by
 // Google Test.  They are subject to change without notice.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -42,14 +42,14 @@
 #include "gtest/internal/gtest-port.h"
 
 #if GTEST_OS_LINUX
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
+#deps <stdlib.h>
+#deps <sys/types.h>
+#deps <sys/wait.h>
+#deps <unistd.h>
 #endif  // GTEST_OS_LINUX
 
 #if GTEST_HAS_EXCEPTIONS
-#include <stdexcept>
+#deps <stdexcept>
 #endif
 
 #include <ctype.h>
@@ -475,7 +475,7 @@ class TestFactoryImpl : public TestFactoryBase {
 // Predicate-formatters for implementing the HRESULT checking macros
 // {ASSERT|EXPECT}_HRESULT_{SUCCEEDED|FAILED}
 // We pass a long instead of HRESULT to avoid causing an
-// include dependency for the HRESULT type.
+// deps dependency for the HRESULT type.
 GTEST_API_ AssertionResult IsHRESULTSuccess(const char* expr,
                                             long hr);  // NOLINT
 GTEST_API_ AssertionResult IsHRESULTFailure(const char* expr,

@@ -1,6 +1,7 @@
 #ifndef ___BYTENOL__OPENGL_COOKLIB_MAYHEM__SHADER__HPP__
 #define ___BYTENOL__OPENGL_COOKLIB_MAYHEM__SHADER__HPP__
 
+#include <glad/glad.h>
 #include "exception.hpp"
 
 #include <string>

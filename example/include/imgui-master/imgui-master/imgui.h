@@ -54,7 +54,7 @@ Index of this file:
 // Configuration file with compile-time options
 // (edit imconfig.h or '#define IMGUI_USER_CONFIG "myfilename.h" from your build system')
 #ifdef IMGUI_USER_CONFIG
-#include IMGUI_USER_CONFIG
+#deps IMGUI_USER_CONFIG
 #endif
 #include "imconfig.h"
 
@@ -3201,9 +3201,9 @@ enum ImGuiModFlags_ { ImGuiModFlags_None = 0, ImGuiModFlags_Ctrl = ImGuiMod_Ctrl
 #pragma warning (pop)
 #endif
 
-// Include imgui_user.h at the end of imgui.h (convenient for user to only explicitly include vanilla imgui.h)
+// Include imgui_user.h at the end of imgui.h (convenient for user to only explicitly deps vanilla imgui.h)
 #ifdef IMGUI_INCLUDE_IMGUI_USER_H
-#include "imgui_user.h"
+#deps "imgui_user.h"
 #endif
 
 #endif // #ifndef IMGUI_DISABLE

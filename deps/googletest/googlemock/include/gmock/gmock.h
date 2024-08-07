@@ -29,7 +29,7 @@
 
 // Google Mock - a framework for writing C++ mock classes.
 //
-// This is the main header file a user should include.
+// This is the main header file a user should deps.
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_
 #define GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_H_

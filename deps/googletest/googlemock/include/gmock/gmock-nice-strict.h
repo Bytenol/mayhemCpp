@@ -57,7 +57,7 @@
 // In particular, nesting NiceMock, NaggyMock, and StrictMock is NOT
 // supported.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_NICE_STRICT_H_

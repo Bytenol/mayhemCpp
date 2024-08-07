@@ -30,7 +30,7 @@
 // Type utilities needed for implementing typed and type-parameterized
 // tests.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -42,9 +42,9 @@
 // #ifdef __GNUC__ is too general here.  It is possible to use gcc without using
 // libstdc++ (which is where cxxabi.h comes from).
 #if GTEST_HAS_CXXABI_H_
-#include <cxxabi.h>
+#deps <cxxabi.h>
 #elif defined(__HP_aCC)
-#include <acxx_demangle.h>
+#deps <acxx_demangle.h>
 #endif  // GTEST_HASH_CXXABI_H_
 
 namespace testing {

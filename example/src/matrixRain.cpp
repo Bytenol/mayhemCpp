@@ -1,27 +1,47 @@
 /**
- * @Author: Mustapha Ibrahim A.
- * @Created: 16th August, 2023
- * @LastModified: 31st August, 2023
- *
- * This is a sample demo of the matrix rain animation.
+ * @file matrixRain.cpp
+ * @author Mustapha Ibrahim (github.com/bytenol)
+ * @brief Animation [Matrix rain] in 2d
+ * @version 0.1
+ * @date 2024-05-03
+ * 
+ * @todo use fileSystem to get images
+ * @todo fix and resolve dt
+ * 
+ * @copyright Copyright (c) 2024
+ * 
  */
-#include <mayhem/mayhem.hpp>
-#include <string>
+#include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <standalone/mayhem.hpp>
+
 #include <iostream>
+#include <string>
 #include <random>
-#include <ctime>
+#include <chrono>
+#include <exception>
+#include <filesystem>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <misc/stb_image.h>
 
-using namespace std;
 using namespace mhy;
 
-std::default_random_engine random;
+using namespace std;
+
+using namespace glm;
+
+
+
+default_random_engine random;
+
 unsigned row, col;
+
 float texIndexTable[22];
-const float fontSize { 20.0f };
+
+const float fontSize { 20.0f };     // original fontSize is 20px
+
 const float spacing { fontSize * 0.2f };
+
 const float texStride{ fontSize / 440.0f }; // width of the image is 440px
 
 
@@ -59,6 +79,7 @@ float randRange(const float& min, const float& max) {
 }
 
 
+
 struct Text {
 
     static float speed;     // relative speed for the text animation
@@ -78,8 +99,8 @@ struct Text {
         this->texId = texId;
         this->color = color;
         this->isStatic = isStatic;
-        textUpdateLastTime = 100.0f;
-        posUpdateLastTime = 30.0f;
+        textUpdateLastTime = 50.0f;
+        posUpdateLastTime = 15.0f;
         oldY = y;
     }
 
@@ -149,133 +170,138 @@ private:
 
 float Text::speed = 100.0f;
 
-class MatrixRain: public GLRenderer {
+
+class Application : public Canvas {
 
     unsigned VBOs[3], VAO;   // position, texture, index
-    mhy::Shader shader;
-    std::vector<Text> backgroundTexts, foregroundTexts;
-    std::vector<int> indices;
+    Shader shader;
+    vector<Text> backgroundTexts, foregroundTexts;
+    vector<int> indices;
     glm::mat4 projectionMatrix;
+    float timeStarted = -1.0f;
 
-public:
-    MatrixRain(const int& w, const int& h, const std::string& t): GLRenderer(w, h, t){}
+    public:
 
-protected:
-
-    void reset() {
-        indices.clear();
-        backgroundTexts.clear();
-        foregroundTexts.clear();
-        row = (getHeight() + fontSize) / fontSize;
-        col = (getWidth() + fontSize) / fontSize;
-
-        for(int i{}; i < (row + 1) * col; i++) {
-            int si{ i * 4 };
-            indices.insert(indices.end(), { si, si + 1, si+ 2, si, si + 2, si + 3 });
+        Application(const float& w, const float& h, const string& t): Canvas(w, h, t) {
+            cout << "Canvas created" << endl;
         }
 
-        for(int i{}; i < row; i++) {
-            for(int j{}; j < col; j++) {
-                if(i == 0) foregroundTexts.push_back({ j, i, j % 21, { 1, 1, 1, 1 }, false });
-                backgroundTexts.push_back({ j, i, j % 21, { 0, 1, 0, 0 } });
+
+    private:
+
+        void onEnter(window_ptr window) override {
+            shader.loadFromString(vertexShaderSource, fragmentShaderSource);
+            shader.use();
+            shader.addLocation("projectionMatrix");
+            
+            glGenBuffers(3, VBOs);
+            glGenVertexArrays(1, &VAO);
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+            glBufferData(GL_ARRAY_BUFFER, (unsigned int)Text::getSize() * col * (row + 1), nullptr, GL_DYNAMIC_DRAW);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float)));
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOs[2]);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+            reset();
+
+            glBindTexture(GL_TEXTURE_2D, VBOs[1]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            // string imagePath = string(std::filesystem::current_path()) + "/assets/images/matrixRainText.png";
+
+            int width, height, nrChannel;
+            unsigned char *data = stbi_load("C:/Users/bytenol/Documents/Programming/Github/MayhemCPP/example/assets/images/matrixRainText.png", &width, &height, &nrChannel, 0);
+
+            if(data) {
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,GL_UNSIGNED_BYTE, data);
+                glGenerateMipmap(GL_TEXTURE_2D);
+            } else {
+                throw std::logic_error("Unable to load matrixRainText.png");
             }
+
+            // generate lookup table for texts
+            for(int i{}; i < 22; i++) texIndexTable[i] = i * fontSize / width;
+
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         }
 
-        glBufferData(GL_ARRAY_BUFFER, (unsigned int)Text::getSize() * col * (row + 1), nullptr, GL_DYNAMIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
-        glViewport(0, 0, getWidth(), getHeight());
-        projectionMatrix = glm::ortho(0.0f, static_cast<float>(getWidth()), static_cast<float>(getHeight()), 0.0f);
-        shader.setUniform("projectionMatrix", glm::value_ptr(projectionMatrix));
-    }
-
-
-    void onStart() override {
-        if(!shader.loadFromString(vertexShaderSource, fragmentShaderSource)) {
-            setError(shader.getError());
-            return;
+        void onUpdate(float elapsedTime) override {
+            if(timeStarted < 0.0f) timeStarted = elapsedTime;
+            float dt = 0.16f;//1.06 / 60.0f;
+            timeStarted = elapsedTime;
+            std::vector<float> vertexData;
+            for(auto& m: foregroundTexts) m.updateData(dt, vertexData, backgroundTexts);
+            for(auto& m: backgroundTexts) m.updateData(dt, vertexData, backgroundTexts);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, (int)(sizeof(float) * vertexData.size()), vertexData.data());
         }
 
-        random.seed(time(nullptr));
+        void onDraw(window_ptr window) override {
+            glViewport(0, 0, getWidth(), getHeight());
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.use();
-        
-        glGenBuffers(3, VBOs);
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-        glBufferData(GL_ARRAY_BUFFER, (unsigned int)Text::getSize() * col * (row + 1), nullptr, GL_DYNAMIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOs[2]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
-
-        reset();
-
-        glBindTexture(GL_TEXTURE_2D, VBOs[1]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        int width, height, nrChannel;
-        unsigned char *data = stbi_load("../../assets/matrixRain.png", &width, &height, &nrChannel, 0);
-
-        if(data) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        } else {
-            setError("Unable to load the matrixRain typography image");
+            glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
         }
 
-        // generate lookup table for texts
-        for(int i{}; i < 22; i++) texIndexTable[i] = i * fontSize / width;
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    }
+        void onExit(window_ptr window) override {
+            glDeleteBuffers(3, VBOs);
+            glDeleteVertexArrays(1, &VAO);
+        }
 
 
-    void onUpdate(float dt) override {
-        std::vector<float> vertexData;
-        for(auto& m: foregroundTexts) m.updateData(dt, vertexData, backgroundTexts);
-        for(auto& m: backgroundTexts) m.updateData(dt, vertexData, backgroundTexts);
-        glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, (int)(sizeof(float) * vertexData.size()), vertexData.data());
+        void reset() {
+            timeStarted = -1.0f;
+            indices.clear();
+            backgroundTexts.clear();
+            foregroundTexts.clear();
+            row = (getHeight() + fontSize) / fontSize;
+            col = (getWidth() + fontSize) / fontSize;
 
-    }
+            for(int i{}; i < (row + 1) * col; i++) {
+                int si{ i * 4 };
+                indices.insert(indices.end(), { si, si + 1, si+ 2, si, si + 2, si + 3 });
+            }
 
+            for(int i{}; i < row; i++) {
+                for(int j{}; j < col; j++) {
+                    if(i == 0) foregroundTexts.push_back({ j, i, j % 21, { 1, 1, 1, 1 }, false });
+                    backgroundTexts.push_back({ j, i, j % 21, { 0, 1, 0, 0 } });
+                }
+            }
 
-    void onDraw() override {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, nullptr);
-    }
-
-
-    void onResize() override {
-        reset();
-    }
-
-
-    void onClose() override {
-        glDeleteBuffers(3, VBOs);
-        glDeleteVertexArrays(1, &VAO);
-    }
+            glBufferData(GL_ARRAY_BUFFER, (unsigned int)Text::getSize() * col * (row + 1), nullptr, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+            glViewport(0, 0, getWidth(), getHeight());
+            projectionMatrix = glm::ortho(0.0f, getWidth(), getHeight(), 0.0f);
+            shader.use();
+            glUniformMatrix4fv(shader.getLocation("projectionMatrix"), 1, false, glm::value_ptr(projectionMatrix));
+        }
 
 
 };
 
 
-int main() {
-    MatrixRain mayhem{ 620, 620, "Matrix Rain" };
-    if(mayhem.init()) mayhem.start();
-    else {
-        std::cout << mayhem.getError();
-        return -1;
-    }
+int main(int argc, char const *argv[])
+{
+    auto seedVal = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    random.seed(seedVal);
+
+    Application window{ 400, 500, "Canvas Basic" };
+
+    window.start();
+
     return 0;
 }

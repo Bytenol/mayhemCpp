@@ -3899,7 +3899,7 @@ ImGuiID ImGui::GetColumnsID(const char* str_id, int columns_count)
     ImGuiWindow* window = GetCurrentWindow();
 
     // Differentiate column ID with an arbitrary prefix for cases where users name their columns set the same as another widget.
-    // In addition, when an identifier isn't explicitly provided we include the number of columns in the hash to make it uniquer.
+    // In addition, when an identifier isn't explicitly provided we deps the number of columns in the hash to make it uniquer.
     PushID(0x11223347 + (str_id ? 0 : columns_count));
     ImGuiID id = window->GetID(str_id ? str_id : "columns");
     PopID();

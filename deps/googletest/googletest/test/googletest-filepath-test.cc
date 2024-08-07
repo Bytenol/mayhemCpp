@@ -33,16 +33,16 @@
 // Google Test.  They are subject to change without notice.
 //
 // This file is #included from gtest-internal.h.
-// Do not #include this file anywhere else!
+// Do not #deps this file anywhere else!
 
 #include "gtest/gtest.h"
 #include "gtest/internal/gtest-filepath.h"
 #include "src/gtest-internal-inl.h"
 
 #if GTEST_OS_WINDOWS_MOBILE
-#include <windows.h>  // NOLINT
+#deps <windows.h>  // NOLINT
 #elif GTEST_OS_WINDOWS
-#include <direct.h>  // NOLINT
+#deps <direct.h>  // NOLINT
 #endif               // GTEST_OS_WINDOWS_MOBILE
 
 namespace testing {

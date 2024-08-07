@@ -33,7 +33,7 @@
 // cardinalities can be defined by the user implementing the
 // CardinalityInterface interface if necessary.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_CARDINALITIES_H_

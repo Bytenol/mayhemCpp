@@ -94,7 +94,7 @@
 // being defined as many user-defined container types don't have
 // value_type.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -1048,7 +1048,7 @@ template <typename T>
 }  // namespace testing
 
 // Include any custom printer added by the local installation.
-// We must include this header at the end to make sure it can use the
+// We must deps this header at the end to make sure it can use the
 // declarations from this file.
 #include "gtest/internal/custom/gtest-printers.h"
 

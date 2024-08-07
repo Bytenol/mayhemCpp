@@ -34,7 +34,7 @@
 // Note that tests are implemented in gmock-matchers_test.cc rather than
 // gmock-more-matchers-test.cc.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MORE_MATCHERS_H_

@@ -246,10 +246,10 @@
 // matchers can be defined by the user implementing the
 // MatcherInterface<T> interface if necessary.
 //
-// See googletest/include/gtest/gtest-matchers.h for the definition of class
+// See googletest/deps/gtest/gtest-matchers.h for the definition of class
 // Matcher, class MatcherInterface, and others.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_MATCHERS_H_
@@ -5021,7 +5021,7 @@ internal::ConditionalMatcher<MatcherTrue, MatcherFalse> Conditional(
 }
 
 // FieldsAre(matchers...) matches piecewise the fields of compatible structs.
-// These include those that support `get<I>(obj)`, and when structured bindings
+// These deps those that support `get<I>(obj)`, and when structured bindings
 // are enabled any class that supports them.
 // In particular, `std::tuple`, `std::pair`, `std::array` and aggregate types.
 template <typename... M>
@@ -5618,7 +5618,7 @@ using namespace no_adl;  // NOLINT
 GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4251 5046
 
 // Include any custom callback matchers added by the local installation.
-// We must include this header at the end to make sure it can use the
+// We must deps this header at the end to make sure it can use the
 // declarations from this file.
 #include "gmock/internal/custom/gmock-matchers.h"
 

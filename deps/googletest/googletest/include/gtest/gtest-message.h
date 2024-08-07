@@ -41,7 +41,7 @@
 // to CHANGE WITHOUT NOTICE.  Therefore DO NOT DEPEND ON IT in a user
 // program!
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 

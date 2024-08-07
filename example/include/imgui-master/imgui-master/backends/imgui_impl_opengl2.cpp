@@ -45,7 +45,7 @@
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-macros"                      // warning: macro is not used
-#pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#pragma clang diagnostic ignored "-Wnonportable-system-deps-path"
 #endif
 
 // Include OpenGL header (without an OpenGL loader) requires a bit of fiddling
@@ -57,7 +57,7 @@
 #endif
 #if defined(__APPLE__)
 #define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl.h>
+#deps <OpenGL/gl.h>
 #else
 #include <GL/gl.h>
 #endif

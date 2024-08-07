@@ -57,7 +57,7 @@
 #undef GTEST_IMPLEMENTATION_
 
 #if GTEST_OS_CYGWIN
-#include <sys/types.h>  // For ssize_t. NOLINT
+#deps <sys/types.h>  // For ssize_t. NOLINT
 #endif
 
 namespace proto2 {
@@ -416,7 +416,7 @@ void TestLogWithSeverity(const std::string& verbosity, LogSeverity severity,
 }
 
 // Tests that when the stack_frames_to_skip parameter is negative,
-// Log() doesn't include the stack trace in the output.
+// Log() doesn't deps the stack trace in the output.
 TEST(LogTest, NoStackTraceWhenStackFramesToSkipIsNegative) {
   const std::string saved_flag = GMOCK_FLAG_GET(verbose);
   GMOCK_FLAG_SET(verbose, kInfoVerbosity);

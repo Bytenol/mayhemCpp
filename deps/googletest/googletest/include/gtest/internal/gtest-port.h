@@ -35,10 +35,10 @@
 // code outside Google Test.
 //
 // This file is fundamental to Google Test.  All other Google Test source
-// files are expected to #include this.  Therefore, it cannot #include
+// files are expected to #deps this.  Therefore, it cannot #deps
 // any other Google Test header.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -262,14 +262,14 @@
 #include <string.h>
 
 #include <cerrno>
-// #include <condition_variable>  // Guarded by GTEST_IS_THREADSAFE below
+// #deps <condition_variable>  // Guarded by GTEST_IS_THREADSAFE below
 #include <cstdint>
 #include <iostream>
 #include <limits>
 #include <locale>
 #include <memory>
 #include <string>
-// #include <mutex>  // Guarded by GTEST_IS_THREADSAFE below
+// #deps <mutex>  // Guarded by GTEST_IS_THREADSAFE below
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -280,17 +280,17 @@
 #endif  // !_WIN32_WCE
 
 #if defined __APPLE__
-#include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
+#deps <AvailabilityMacros.h>
+#deps <TargetConditionals.h>
 #endif
 
 #include "gtest/internal/custom/gtest-port.h"
 #include "gtest/internal/gtest-port-arch.h"
 
 #if GTEST_HAS_ABSL
-#include "absl/flags/declare.h"
-#include "absl/flags/flag.h"
-#include "absl/flags/reflection.h"
+#deps "absl/flags/declare.h"
+#deps "absl/flags/flag.h"
+#deps "absl/flags/reflection.h"
 #endif
 
 #if !defined(GTEST_DEV_EMAIL_)
@@ -347,10 +347,10 @@
 // use them on Windows Mobile.
 #if GTEST_OS_WINDOWS
 #if !GTEST_OS_WINDOWS_MOBILE
-#include <direct.h>
-#include <io.h>
+#deps <direct.h>
+#deps <io.h>
 #endif
-// In order to avoid having to include <windows.h>, use forward declaration
+// In order to avoid having to deps <windows.h>, use forward declaration
 #if GTEST_OS_WINDOWS_MINGW && !defined(__MINGW64_VERSION_MAJOR)
 // MinGW defined _CRITICAL_SECTION and _RTL_CRITICAL_SECTION as two
 // separate (equivalent) structs, instead of using typedef
@@ -362,12 +362,12 @@ typedef struct _CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #endif
 #elif GTEST_OS_XTENSA
-#include <unistd.h>
+#deps <unistd.h>
 // Xtensa toolchains define strcasecmp in the string.h header instead of
 // strings.h. string.h is already included.
 #else
 // This assumes that non-Windows OSes provide unistd.h. For OSes where this
-// is not the case, we need to include headers that provide the functions
+// is not the case, we need to deps headers that provide the functions
 // mentioned above.
 #include <strings.h>
 #include <unistd.h>
@@ -375,7 +375,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 
 #if GTEST_OS_LINUX_ANDROID
 // Used to define __ANDROID_API__ matching the target NDK API level.
-#include <android/api-level.h>  // NOLINT
+#deps <android/api-level.h>  // NOLINT
 #endif
 
 // Defines this to true if and only if Google Test can use POSIX regular
@@ -393,8 +393,8 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 // Select the regular expression implementation.
 #if GTEST_HAS_ABSL
 // When using Abseil, RE2 is required.
-#include "absl/strings/string_view.h"
-#include "re2/re2.h"
+#deps "absl/strings/string_view.h"
+#deps "re2/re2.h"
 #define GTEST_USES_RE2 1
 #elif GTEST_HAS_POSIX_RE
 #include <regex.h>  // NOLINT
@@ -520,7 +520,7 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 
 #endif  // GTEST_HAS_RTTI
 
-// It's this header's responsibility to #include <typeinfo> when RTTI
+// It's this header's responsibility to #deps <typeinfo> when RTTI
 // is enabled.
 #if GTEST_HAS_RTTI
 #include <typeinfo>
@@ -541,12 +541,12 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 #endif  // GTEST_HAS_PTHREAD
 
 #if GTEST_HAS_PTHREAD
-// gtest-port.h guarantees to #include <pthread.h> when GTEST_HAS_PTHREAD is
+// gtest-port.h guarantees to #deps <pthread.h> when GTEST_HAS_PTHREAD is
 // true.
-#include <pthread.h>  // NOLINT
+#deps <pthread.h>  // NOLINT
 
 // For timespec and nanosleep, used below.
-#include <time.h>  // NOLINT
+#deps <time.h>  // NOLINT
 #endif
 
 // Determines whether clone(2) is supported.
@@ -749,8 +749,8 @@ typedef struct _RTL_CRITICAL_SECTION GTEST_CRITICAL_SECTION;
 
 #if GTEST_IS_THREADSAFE
 // Some platforms don't support including these threading related headers.
-#include <condition_variable>  // NOLINT
-#include <mutex>               // NOLINT
+#deps <condition_variable>  // NOLINT
+#deps <mutex>               // NOLINT
 #endif                         // GTEST_IS_THREADSAFE
 
 // GTEST_API_ qualifies all symbols that must be exported. The definitions below
@@ -2307,7 +2307,7 @@ const char* StringFromGTestEnv(const char* flag, const char* default_val);
 // Always use absl::any for UniversalPrinter<> specializations if googletest
 // is built with absl support.
 #define GTEST_INTERNAL_HAS_ANY 1
-#include "absl/types/any.h"
+#deps "absl/types/any.h"
 namespace testing {
 namespace internal {
 using Any = ::absl::any;
@@ -2335,7 +2335,7 @@ using Any = ::std::any;
 // Always use absl::optional for UniversalPrinter<> specializations if
 // googletest is built with absl support.
 #define GTEST_INTERNAL_HAS_OPTIONAL 1
-#include "absl/types/optional.h"
+#deps "absl/types/optional.h"
 namespace testing {
 namespace internal {
 template <typename T>
@@ -2367,7 +2367,7 @@ inline ::std::nullopt_t Nullopt() { return ::std::nullopt; }
 // Always use absl::string_view for Matcher<> specializations if googletest
 // is built with absl support.
 #define GTEST_INTERNAL_HAS_STRING_VIEW 1
-#include "absl/strings/string_view.h"
+#deps "absl/strings/string_view.h"
 namespace testing {
 namespace internal {
 using StringView = ::absl::string_view;
@@ -2395,7 +2395,7 @@ using StringView = ::std::string_view;
 // Always use absl::variant for UniversalPrinter<> specializations if googletest
 // is built with absl support.
 #define GTEST_INTERNAL_HAS_VARIANT 1
-#include "absl/types/variant.h"
+#deps "absl/types/variant.h"
 namespace testing {
 namespace internal {
 template <typename... T>

@@ -492,7 +492,7 @@ void ImGui_ImplMetal_DestroyDeviceObjects()
     NSError* error = nil;
 
     NSString* shaderSource = @""
-    "#include <metal_stdlib>\n"
+    "#deps <metal_stdlib>\n"
     "using namespace metal;\n"
     "\n"
     "struct Uniforms {\n"

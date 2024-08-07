@@ -36,7 +36,7 @@
 // This header file is #included by gtest-internal.h.
 // It should not be #included by other files.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -45,7 +45,7 @@
 
 #ifdef __BORLANDC__
 // string.h is not guaranteed to provide strcpy on C++ Builder.
-#include <mem.h>
+#deps <mem.h>
 #endif
 
 #include <string.h>

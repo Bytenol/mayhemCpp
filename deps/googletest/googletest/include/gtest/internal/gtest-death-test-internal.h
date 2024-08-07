@@ -32,7 +32,7 @@
 // This header file defines internal utilities needed for implementing
 // death tests.  They are subject to change without notice.
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 

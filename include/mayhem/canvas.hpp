@@ -1,17 +1,18 @@
 #ifndef ___BYTENOL__OPENGL_COOKLIB_MAYHEM__CANVAS__HPP__
 #define ___BYTENOL__OPENGL_COOKLIB_MAYHEM__CANVAS__HPP__
 
-#include "../../deps/glad/include/glad/glad.h"
+#include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
-#include "../../deps/glfw-3.3.8/include/GLFW/glfw3.h"
-#include "shader.hpp"
+#include <GLFW/glfw3.h>
+
 #include "exception.hpp"
+#include "drawable.hpp"
+#include "shader.hpp"
 
 #include <vector>
 #include <string>
 #include <chrono>
 #include <map>
-#include <utility>
 
 
 namespace mhy {
@@ -25,42 +26,25 @@ namespace mhy {
      */
     class Canvas {
 
-        private:
-            static float width;
-
-            static float height;
-
+        
+        static float width, height;
 
         protected:
+
+            using window_type = GLFWwindow;
+            using window_ptr = window_type*;
 
             static void setWidth(const float& w);
 
             static void setHeight(const float& h);
 
-            static float& getWidth();
+            static const float& getWidth();
 
-            static float& getHeight();
+            static const float& getHeight();
 
+            inline void setTitle(const std::string& t);
 
-        private:
-
-            GLFWwindow* window;
-
-            std::string title;
-
-            std::string error;
-
-            std::chrono::time_point<std::chrono::high_resolution_clock> timeStarted;
-
-            std::map<std::string, Shader> _allShaders;
-
-            std::string currShader;
-
-            int version[2]{ 3, 3 };
-
-            void initGlfWindow();
-
-            std::string getUpdatedTitle(float elapsedTime) const;
+            inline float getElapsedTime() const;
 
 
         public:
@@ -88,9 +72,6 @@ namespace mhy {
 
         protected:
 
-            using window_type = GLFWwindow;
-            using window_ptr = GLFWwindow*;
-
             /**
              * @brief Set the Version of OpenGL. The minimum supported version is Opengl3.3
              * and that is what the canvas defaults to.
@@ -100,27 +81,87 @@ namespace mhy {
              */
             void setVersion(const int& major = 3, const int& minor = 3);
 
+
+            void createVAO(const std::string& name);
+
+            void bindVAO(const std::string& name);
+
+            void createVBO(const std::string& name, GLsizeiptr size, const void* data, GLenum usage = GL_STATIC_DRAW);
+
+            void bindVBO(const std::string& name);
+
+            Rectangle createRect();
+
+            /**
+             * @brief This method is invoked just after the window opened. Initialization can be done here
+             * 
+             * @param window is the pointer to the GLFWwindow's object
+             */
+            virtual void onEnter(window_ptr window) = 0;
+
+
+            /**
+             * @brief This function is invoked on everyFrame
+             * 
+             * @param elapsedTime is the timeElapsed in seconds since when start() is called
+             */
+            virtual void onUpdate(float elapsedTime) = 0;
+
+
+            /**
+             * @brief This method is invoked on everyFrame
+             * 
+             * @param window is the pointer to GLFWwindow's object
+             */
+            virtual void onDraw(window_ptr window) = 0;
+
+
+            /**
+             * @brief This method is invoked just after the window closes. Every cleanup should be done here
+             * 
+             * @param window is the pointer to GLFWwindow's object
+             */
+            virtual void onExit(window_ptr window) { };
+
+
+            //NOT IMPLEMENTED
             void addShader(const std::string& name, const Shader& shader, const std::vector<std::string>& locations);
 
+            //NOT IMPLEMENTED
             void addShader(const std::string& name, const std::string& vertexShaderSource, 
                 const std::string& fragmentShaderSource, const std::vector<std::string>& locations);
 
+            //NOT IMPLEMENTED
             void addShader(const std::string& name, const std::string& vertexShaderSource, 
                 const std::string& fragmentShaderSource, const std::string& geometryShaderSource, const std::vector<std::string>& locations);
 
+            //NOT IMPLEMENTED
             void setCurrentShader(const std::string& name);
 
+            //NOT IMPLEMENTED
             unsigned int getShaderLocation(const std::string& name);
 
-            inline void setTitle(const std::string& t);
 
-            virtual void onEnter(window_ptr window) = 0;
+        private:
 
-            virtual void onUpdate(float elapsedTime) = 0;
+            window_ptr window;
 
-            virtual void onDraw(window_ptr window) = 0;
+            std::string title;
 
-            virtual void onExit(window_ptr window) { };
+            std::map<std::string, unsigned int> VAO, VBO;
+
+            std::vector<Drawable> drawables;
+
+            int version[2]{ 3, 3 };
+
+            void initGlfWindow();
+
+            float elapsedTime = 0;
+
+            std::chrono::time_point<std::chrono::high_resolution_clock> timeStarted;
+
+            std::string getUpdatedTitle(const float& elapsedTime) const;
+
     };
 
 
@@ -129,12 +170,17 @@ namespace mhy {
     }
 
 
-    inline float& Canvas::getWidth() {
+    inline float Canvas::getElapsedTime() const {
+        return elapsedTime;
+    }
+
+
+    inline const float& Canvas::getWidth() {
         return width;
     }
 
 
-    inline float& Canvas::getHeight() {
+    inline const float& Canvas::getHeight() {
         return height;
     }
 

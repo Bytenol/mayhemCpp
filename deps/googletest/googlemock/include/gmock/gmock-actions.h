@@ -124,7 +124,7 @@
 // To learn more about using these macros, please search for 'ACTION' on
 // https://github.com/google/googletest/blob/main/docs/gmock_cook_book.md
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_ACTIONS_H_

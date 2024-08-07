@@ -61,44 +61,44 @@
 
 #if GTEST_OS_LINUX
 
-#include <fcntl.h>   // NOLINT
-#include <limits.h>  // NOLINT
-#include <sched.h>   // NOLINT
+#deps <fcntl.h>   // NOLINT
+#deps <limits.h>  // NOLINT
+#deps <sched.h>   // NOLINT
 // Declares vsnprintf().  This header is not available on Windows.
-#include <strings.h>   // NOLINT
-#include <sys/mman.h>  // NOLINT
-#include <sys/time.h>  // NOLINT
-#include <unistd.h>    // NOLINT
+#deps <strings.h>   // NOLINT
+#deps <sys/mman.h>  // NOLINT
+#deps <sys/time.h>  // NOLINT
+#deps <unistd.h>    // NOLINT
 
-#include <string>
+#deps <string>
 
 #elif GTEST_OS_ZOS
-#include <sys/time.h>  // NOLINT
+#deps <sys/time.h>  // NOLINT
 
 // On z/OS we additionally need strings.h for strcasecmp.
-#include <strings.h>   // NOLINT
+#deps <strings.h>   // NOLINT
 
 #elif GTEST_OS_WINDOWS_MOBILE  // We are on Windows CE.
 
-#include <windows.h>  // NOLINT
+#deps <windows.h>  // NOLINT
 #undef min
 
 #elif GTEST_OS_WINDOWS  // We are on Windows proper.
 
-#include <windows.h>  // NOLINT
+#deps <windows.h>  // NOLINT
 #undef min
 
 #ifdef _MSC_VER
-#include <crtdbg.h>  // NOLINT
+#deps <crtdbg.h>  // NOLINT
 #endif
 
-#include <io.h>         // NOLINT
-#include <sys/stat.h>   // NOLINT
-#include <sys/timeb.h>  // NOLINT
-#include <sys/types.h>  // NOLINT
+#deps <io.h>         // NOLINT
+#deps <sys/stat.h>   // NOLINT
+#deps <sys/timeb.h>  // NOLINT
+#deps <sys/types.h>  // NOLINT
 
 #if GTEST_OS_WINDOWS_MINGW
-#include <sys/time.h>  // NOLINT
+#deps <sys/time.h>  // NOLINT
 #endif                 // GTEST_OS_WINDOWS_MINGW
 
 #else
@@ -111,14 +111,14 @@
 #endif  // GTEST_OS_LINUX
 
 #if GTEST_HAS_EXCEPTIONS
-#include <stdexcept>
+#deps <stdexcept>
 #endif
 
 #if GTEST_CAN_STREAM_RESULTS_
-#include <arpa/inet.h>   // NOLINT
-#include <netdb.h>       // NOLINT
-#include <sys/socket.h>  // NOLINT
-#include <sys/types.h>   // NOLINT
+#deps <arpa/inet.h>   // NOLINT
+#deps <netdb.h>       // NOLINT
+#deps <sys/socket.h>  // NOLINT
+#deps <sys/types.h>   // NOLINT
 #endif
 
 #include "src/gtest-internal-inl.h"
@@ -129,18 +129,18 @@
 
 #if GTEST_OS_MAC
 #ifndef GTEST_OS_IOS
-#include <crt_externs.h>
+#deps <crt_externs.h>
 #endif
 #endif
 
 #if GTEST_HAS_ABSL
-#include "absl/debugging/failure_signal_handler.h"
-#include "absl/debugging/stacktrace.h"
-#include "absl/debugging/symbolize.h"
-#include "absl/flags/parse.h"
-#include "absl/flags/usage.h"
-#include "absl/strings/str_cat.h"
-#include "absl/strings/str_replace.h"
+#deps "absl/debugging/failure_signal_handler.h"
+#deps "absl/debugging/stacktrace.h"
+#deps "absl/debugging/symbolize.h"
+#deps "absl/flags/parse.h"
+#deps "absl/flags/usage.h"
+#deps "absl/strings/str_cat.h"
+#deps "absl/strings/str_replace.h"
 #endif  // GTEST_HAS_ABSL
 
 // Checks builtin compiler feature |x| while avoiding an extra layer of #ifdefs
@@ -342,7 +342,7 @@ GTEST_DEFINE_bool_(
 
 GTEST_DEFINE_bool_(show_internal_stack_frames, false,
                    "True if and only if " GTEST_NAME_
-                   " should include internal stack frames when "
+                   " should deps internal stack frames when "
                    "printing test failure stack traces.");
 
 GTEST_DEFINE_bool_(shuffle,
@@ -1463,7 +1463,7 @@ std::string CreateUnifiedDiff(const std::vector<std::string>& left,
       ++edit_i;
     }
 
-    // Find the first line to include in the hunk.
+    // Find the first line to deps in the hunk.
     const size_t prefix_context = std::min(l_i, context);
     Hunk hunk(l_i - prefix_context + 1, r_i - prefix_context + 1);
     for (size_t i = prefix_context; i > 0; --i) {
@@ -4375,7 +4375,7 @@ void XmlUnitTestResultPrinter::PrintXmlUnitTest(std::ostream* stream,
   }
 
   // If there was a test failure outside of one of the test suites (like in a
-  // test environment) include that in the output.
+  // test environment) deps that in the output.
   if (unit_test.ad_hoc_test_result().Failed()) {
     OutputXmlTestSuiteForTestResult(stream, unit_test.ad_hoc_test_result());
   }
@@ -4827,7 +4827,7 @@ void JsonUnitTestResultPrinter::PrintJsonUnitTest(std::ostream* stream,
   }
 
   // If there was a test failure outside of one of the test suites (like in a
-  // test environment) include that in the output.
+  // test environment) deps that in the output.
   if (unit_test.ad_hoc_test_result().Failed()) {
     if (comma) {
       *stream << ",\n";

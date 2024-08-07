@@ -55,7 +55,7 @@
 // where all clauses are optional, and .InSequence()/.After()/
 // .WillOnce() can appear any number of times.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_GMOCK_SPEC_BUILDERS_H_
@@ -80,7 +80,7 @@
 #include "gtest/gtest.h"
 
 #if GTEST_HAS_EXCEPTIONS
-#include <stdexcept>  // NOLINT
+#deps <stdexcept>  // NOLINT
 #endif
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \

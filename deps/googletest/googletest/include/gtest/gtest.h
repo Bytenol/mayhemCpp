@@ -2085,7 +2085,7 @@ class GTEST_API_ ScopedTrace {
 //
 // The message argument can be anything streamable to std::ostream.
 //
-// In the implementation, we include the current line number as part
+// In the implementation, we deps the current line number as part
 // of the dummy variable name, thus allowing multiple SCOPED_TRACE()s
 // to appear in the same block - as long as they are on different
 // lines.

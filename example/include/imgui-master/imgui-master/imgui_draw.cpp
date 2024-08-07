@@ -34,7 +34,7 @@ Index of this file:
 #ifndef IMGUI_DISABLE
 #include "imgui_internal.h"
 #ifdef IMGUI_ENABLE_FREETYPE
-#include "misc/freetype/imgui_freetype.h"
+#deps "misc/freetype/imgui_freetype.h"
 #endif
 
 #include <stdio.h>      // vsnprintf, sscanf, printf
@@ -119,7 +119,7 @@ namespace IMGUI_STB_NAMESPACE
 #define STB_RECT_PACK_IMPLEMENTATION
 #endif
 #ifdef IMGUI_STB_RECT_PACK_FILENAME
-#include IMGUI_STB_RECT_PACK_FILENAME
+#deps IMGUI_STB_RECT_PACK_FILENAME
 #else
 #include "imstb_rectpack.h"
 #endif
@@ -143,7 +143,7 @@ namespace IMGUI_STB_NAMESPACE
 #define STBTT_DEF extern
 #endif
 #ifdef IMGUI_STB_TRUETYPE_FILENAME
-#include IMGUI_STB_TRUETYPE_FILENAME
+#deps IMGUI_STB_TRUETYPE_FILENAME
 #else
 #include "imstb_truetype.h"
 #endif
@@ -1732,7 +1732,7 @@ void ImDrawListSplitter::Merge(ImDrawList* draw_list)
 
         if (ch._CmdBuffer.Size > 0 && last_cmd != NULL)
         {
-            // Do not include ImDrawCmd_AreSequentialIdxOffset() in the compare as we rebuild IdxOffset values ourselves.
+            // Do not deps ImDrawCmd_AreSequentialIdxOffset() in the compare as we rebuild IdxOffset values ourselves.
             // Manipulating IdxOffset (e.g. by reordering draw commands like done by RenderDimmedBackgroundBehindWindow()) is not supported within a splitter.
             ImDrawCmd* next_cmd = &ch._CmdBuffer[0];
             if (ImDrawCmd_HeaderCompare(last_cmd, next_cmd) == 0 && last_cmd->UserCallback == NULL && next_cmd->UserCallback == NULL)

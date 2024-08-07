@@ -331,7 +331,7 @@ void PrintTo(__int128_t v, ::std::ostream* os) {
 
 // Prints the given array of characters to the ostream.  CharType must be either
 // char, char8_t, char16_t, char32_t, or wchar_t.
-// The array starts at begin, the length is len, it may include '\0' characters
+// The array starts at begin, the length is len, it may deps '\0' characters
 // and may not be NUL-terminated.
 template <typename CharType>
 GTEST_ATTRIBUTE_NO_SANITIZE_MEMORY_ GTEST_ATTRIBUTE_NO_SANITIZE_ADDRESS_

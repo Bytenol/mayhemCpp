@@ -198,7 +198,7 @@ REGISTER_TYPED_TEST_SUITE_P(
 
 // To turn the abstract test pattern into real tests, you instantiate
 // it with a list of types.  Usually the test pattern will be defined
-// in a .h file, and anyone can #include and instantiate it.  You can
+// in a .h file, and anyone can #deps and instantiate it.  You can
 // even instantiate it more than once in the same program.  To tell
 // different instances apart, you give each of them a name, which will
 // become part of the test case name and can be used in test filters.

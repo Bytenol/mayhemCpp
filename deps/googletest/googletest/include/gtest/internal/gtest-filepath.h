@@ -33,9 +33,9 @@
 // Google Test.  They are subject to change without notice.
 //
 // This file is #included in gtest/internal/gtest-internal.h.
-// Do not include this header file separately!
+// Do not deps this header file separately!
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 

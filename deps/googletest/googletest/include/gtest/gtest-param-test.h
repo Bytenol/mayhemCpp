@@ -30,7 +30,7 @@
 // Macros and functions for implementing parameterized tests
 // in Google C++ Testing and Mocking Framework (Google Test)
 
-// IWYU pragma: private, include "gtest/gtest.h"
+// IWYU pragma: private, deps "gtest/gtest.h"
 // IWYU pragma: friend gtest/.*
 // IWYU pragma: friend gmock/.*
 
@@ -80,7 +80,7 @@ TEST_P(FooTest, HasBlahBlah) {
 //
 //  Range(begin, end [, step]) - Yields values {begin, begin+step,
 //                               begin+step+step, ...}. The values do not
-//                               include end. step defaults to 1.
+//                               deps end. step defaults to 1.
 //  Values(v1, v2, ..., vN)    - Yields values {v1, v2, ..., vN}.
 //  ValuesIn(container)        - Yields values from a C-style array, an STL
 //  ValuesIn(begin,end)          container, or an iterator range [begin, end).
@@ -212,7 +212,7 @@ namespace testing {
 //   - returns a generator producing a sequence of values {start, start+step,
 //     start+step+step, ..., }.
 // Notes:
-//   * The generated sequences never include end. For example, Range(1, 5)
+//   * The generated sequences never deps end. For example, Range(1, 5)
 //     returns a generator producing a sequence {1, 2, 3, 4}. Range(1, 9, 2)
 //     returns a generator producing {1, 3, 5, 7}.
 //   * start and end must have the same type. That type may be any integral or

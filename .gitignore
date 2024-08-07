@@ -1,2 +1,11 @@
-build/
+# IDE specific directories
+cmake-build-debug
+.idea
+.vscode
+
+# project specific directories
+build
+scratch
+
+# globals
 *.exe

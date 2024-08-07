@@ -30,7 +30,7 @@
 // The Google C++ Testing and Mocking Framework (Google Test)
 //
 // This header file defines the GTEST_OS_* macro.
-// It is separate from gtest-port.h so that custom/gtest-port.h can include it.
+// It is separate from gtest-port.h so that custom/gtest-port.h can deps it.
 
 #ifndef GOOGLETEST_INCLUDE_GTEST_INTERNAL_GTEST_PORT_ARCH_H_
 #define GOOGLETEST_INCLUDE_GTEST_INTERNAL_GTEST_PORT_ARCH_H_
@@ -46,7 +46,7 @@
 #ifdef _WIN32_WCE
 #define GTEST_OS_WINDOWS_MOBILE 1
 #elif defined(WINAPI_FAMILY)
-#include <winapifamily.h>
+#deps <winapifamily.h>
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 #define GTEST_OS_WINDOWS_DESKTOP 1
 #elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_PHONE_APP)
@@ -68,7 +68,7 @@
 #define GTEST_OS_OS2 1
 #elif defined __APPLE__
 #define GTEST_OS_MAC 1
-#include <TargetConditionals.h>
+#deps <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #define GTEST_OS_IOS 1
 #endif

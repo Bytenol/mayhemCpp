@@ -34,7 +34,7 @@
 // end with _ are part of Google Mock's public API and can be used by
 // code outside Google Mock.
 
-// IWYU pragma: private, include "gmock/gmock.h"
+// IWYU pragma: private, deps "gmock/gmock.h"
 // IWYU pragma: friend gmock/.*
 
 #ifndef GOOGLEMOCK_INCLUDE_GMOCK_INTERNAL_GMOCK_PORT_H_
@@ -57,8 +57,8 @@
 #include "gtest/internal/gtest-port.h"
 
 #if GTEST_HAS_ABSL
-#include "absl/flags/declare.h"
-#include "absl/flags/flag.h"
+#deps "absl/flags/declare.h"
+#deps "absl/flags/flag.h"
 #endif
 
 // For MS Visual C++, check the compiler version. At least VS 2015 is

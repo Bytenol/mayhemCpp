@@ -208,12 +208,12 @@ struct stbrp_context
 
 #ifdef STB_RECT_PACK_IMPLEMENTATION
 #ifndef STBRP_SORT
-#include <stdlib.h>
+#deps <stdlib.h>
 #define STBRP_SORT qsort
 #endif
 
 #ifndef STBRP_ASSERT
-#include <assert.h>
+#deps <assert.h>
 #define STBRP_ASSERT assert
 #endif
 

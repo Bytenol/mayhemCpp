@@ -6,6 +6,7 @@ cmake-build-debug
 # project specific directories
 build
 scratch
+web
 
 # globals
 *.exe

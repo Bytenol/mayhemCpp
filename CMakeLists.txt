@@ -15,6 +15,7 @@ add_subdirectory(deps/glfw-3.4)
 include_directories(include)
 include_directories(deps/glad/include)
 include_directories(deps/glfw-3.4/include)
+include_directories(deps/stb_image)
 
 file(GLOB HPP_HEADER_FILES "include/mayhem/*.hpp")
 file(GLOB CPP_SOURCE_FILES "src/*.cpp")

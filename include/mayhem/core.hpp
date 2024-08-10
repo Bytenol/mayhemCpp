@@ -1,3 +1,12 @@
+/**
+ * @file core.hpp
+ * @date 9th Aug, 2024
+ * 
+ * @todo documentation
+ * @todo createImage()
+ * @todo hide image class api
+ * @todo createTexture()
+ */
 #ifndef ___BYTENOL__CORE_MAYHEM_CPP__HPP__
 #define ___BYTENOL__CORE_MAYHEM_CPP__HPP__
 
@@ -12,41 +21,61 @@
     #include <stb_image/stb_image.h>
 #endif
 
+#include <mayhem/exception.hpp>
+
 
 namespace mhy {
 
     extern std::string _logs;
 
-    class Vao;
-    struct Vbo;
-    struct Ibo;
+    class Buffer;
     struct Image;
     struct Texture2D;
 
-    using vao_ptr = std::unique_ptr<Vao>;
+    using buff_ptr = std::unique_ptr<Buffer>;
+    using img_ptr = std::unique_ptr<Image>;
 
-    std::string getBackDirectory(std::string currPath, int backCount);
-
-    std::unique_ptr<Image> loadImage(const std::string& path);
-
-    vao_ptr createVao();
-    void bindVao(vao_ptr o);
-    void unbindVao();
+    enum class BufferType {
+        VERTEX_ARRAY_OBJECT,
+        VERTEX_BUFFER_OBJECT,
+        ELEMENT_ARRAY_OBJECT
+    };
 
     /**
-     * Vertex array objects
+     * Gets the directory of a file by looping backward the tree
+     * @param currPath is the starting directory
+     * @param backCount is the number of parent tree to skip backwardly
      */
-    class Vao {
+    std::string getBackDirectory(std::string currPath, int backCount);
 
-        friend vao_ptr createVao();
-        friend void bindVao(vao_ptr o);
+
+    /**
+     * Load an image file.
+     * @param path is the path to the image resource
+     * @return true an img_ptr to the image
+     */
+    img_ptr loadImage(const std::string& path);
+
+    buff_ptr createBuffer(BufferType type);
+    void bindBuffer(buff_ptr& o);
+    void bindBuffer(BufferType type);
+
+    /**
+     * Buffer objects
+     * by implementation vbo, ibo are binded at where they are created
+     */
+    class Buffer {
+
+        friend buff_ptr createBuffer(BufferType type);
+        friend void bindBuffer(buff_ptr& o);
 
         public:
-            explicit Vao() = default;
-            ~Vao();
+            explicit Buffer() = default;
+            ~Buffer();
 
         private:
             unsigned int buffer;
+            BufferType type;
     };
 
     struct Image {
@@ -61,13 +90,9 @@ namespace mhy {
     };
 
 
-    inline void setInfoLog(const std::string& msg) {
-        _logs = msg;
-    };
+    inline void setInfoLog(const std::string& msg) { _logs = msg; };
 
-    inline const std::string& getInfoLog() {
-        return _logs;
-    };
+    inline const std::string& getInfoLog() { return _logs; };
 
 };
 

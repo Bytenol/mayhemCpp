@@ -1,5 +1,5 @@
-#ifndef ___BYTENOL__OPENGL_COOKLIB_MAYHEM__EXCEPTION__HPP__
-#define ___BYTENOL__OPENGL_COOKLIB_MAYHEM__EXCEPTION__HPP__
+#ifndef ___BYTENOL__EXCEPTION_MAYHEM__CPP__HPP__
+#define ___BYTENOL__EXCEPTION_MAYHEM__CPP__HPP__
 
 #include <stdexcept>
 #include <string>
@@ -7,21 +7,34 @@
 
 namespace mhy {
 
-    class NotImplementedException: public std::logic_error {
+    class _MayhemCppExceptionBase: public std::logic_error {
         public:
-            NotImplementedException(): std::logic_error("Function not yet implemented") {}
+            _MayhemCppExceptionBase(const std::string& msg): 
+                std::logic_error(msg + " in FILE " + __FILE__ + 
+                " at line " + std::to_string(__LINE__)) {}
+    };
+
+    class NotImplementedException: public _MayhemCppExceptionBase {
+        public:
+            NotImplementedException(): _MayhemCppExceptionBase("Function not yet implemented") {}
     };
 
 
-    class GlFailureException: public std::logic_error {
+    class GlFailureException: public _MayhemCppExceptionBase {
         public:
-            GlFailureException(const std::string& msg): std::logic_error(msg) { }
+            GlFailureException(const std::string& msg): _MayhemCppExceptionBase(msg) { }
     };
 
 
-    class ShaderFailureException: public std::logic_error {
+    class ShaderFailureException: public _MayhemCppExceptionBase {
         public:
-            ShaderFailureException(const std::string& msg): std::logic_error(msg) { }
+            ShaderFailureException(const std::string& msg): _MayhemCppExceptionBase(msg) { }
+    };
+
+
+    class InvalidBufferException: public _MayhemCppExceptionBase {
+        public:
+            InvalidBufferException(const std::string& msg): _MayhemCppExceptionBase(msg) { }
     };
 
 }

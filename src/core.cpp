@@ -1,13 +1,8 @@
 #include "../include/mayhem/core.hpp"
 
-
 std::string mhy::_logs;
 
-/**
- * Gets the directory of a file by looping backward the tree
- * @param currPath is the starting directory
- * @param backCount is the number of parent tree to skip backwardly
- */
+
 std::string mhy::getBackDirectory(std::string currPath, int backCount)
 {
     auto cPath = std::filesystem::path(currPath).parent_path();
@@ -22,12 +17,7 @@ std::string mhy::getBackDirectory(std::string currPath, int backCount)
 }
 
 
-/**
- * Load an image file.
- * @param path is the path to the image resource
- * @return true a unique_ptr to the image
- */
-std::unique_ptr<mhy::Image> mhy::loadImage(const std::string& path) {
+mhy::img_ptr mhy::loadImage(const std::string& path) {
     std::unique_ptr<Image> img(new Image{});
 
     auto ii = path.c_str();
@@ -40,24 +30,77 @@ std::unique_ptr<mhy::Image> mhy::loadImage(const std::string& path) {
     return img;
 }
 
-std::unique_ptr<mhy::Vao> mhy::createVao()
+
+mhy::buff_ptr mhy::createBuffer(BufferType type)
 {
-    std::unique_ptr<Vao> vao(new Vao{});
-    glGenVertexArrays(1, &vao->buffer);
+    std::unique_ptr<Buffer> vao(new Buffer{});
+    vao->type = type;
+
+    switch(type) {
+        case BufferType::VERTEX_ARRAY_OBJECT:
+            glGenVertexArrays(1, &vao->buffer);
+            break;
+
+        case BufferType::VERTEX_BUFFER_OBJECT:
+        case BufferType::ELEMENT_ARRAY_OBJECT:
+            glGenBuffers(1, &vao->buffer);
+            bindBuffer(vao);
+            break;
+
+        default:
+            throw mhy::InvalidBufferException("Cannot create an instance of an invalid buffer at " + std::to_string(__LINE__));
+    }
     return vao;
 }
 
-void mhy::bindVao(vao_ptr o)
+
+void mhy::bindBuffer(buff_ptr& o)
 {
-    glBindVertexArray(o->buffer);
+    switch(o->type) {
+        case BufferType::VERTEX_ARRAY_OBJECT:
+            glBindVertexArray(o->buffer);;
+            break;
+        case BufferType::VERTEX_BUFFER_OBJECT:
+            glBindBuffer(GL_ARRAY_BUFFER, o->buffer);
+            break;
+        case BufferType::ELEMENT_ARRAY_OBJECT:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, o->buffer);
+            break;
+        default:
+            throw mhy::InvalidBufferException("Cannot bind to an invalid buffer instance at " + std::to_string(__LINE__));
+    }
 }
 
-void mhy::unbindVao()
+void mhy::bindBuffer(BufferType type)
 {
-    glBindVertexArray(0);
+    switch(type) {
+        case BufferType::VERTEX_ARRAY_OBJECT:
+            glBindVertexArray(0);
+            break;
+        case BufferType::VERTEX_BUFFER_OBJECT:
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            break;
+        case BufferType::ELEMENT_ARRAY_OBJECT:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            break;
+        default:
+            throw mhy::InvalidBufferException("Cannot unbind from an invalid buffer instance" + std::to_string(__LINE__));
+    }
 }
 
-mhy::Vao::~Vao()
+mhy::Buffer::~Buffer()
 {
-    glDeleteVertexArrays(1, &buffer);
+    switch(type) {
+        case BufferType::VERTEX_ARRAY_OBJECT:
+            glDeleteVertexArrays(1, &buffer);
+            break;
+
+        case BufferType::VERTEX_BUFFER_OBJECT:
+        case BufferType::ELEMENT_ARRAY_OBJECT:
+            glDeleteBuffers(1, &buffer);
+            break;
+
+        default:
+            setInfoLog("There may be some dangling buffers not deleted");
+    }
 }

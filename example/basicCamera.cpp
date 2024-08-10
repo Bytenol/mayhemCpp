@@ -32,7 +32,7 @@ uniform sampler2D image;
 out vec4 FragColor;
 
 void main() {
-    FragColor = texture(image, o_texCoord) * vec4(1, 0, 0, 1);
+    FragColor = texture(image, o_texCoord) * vec4(1, 1, 1, 1);
 }
 )";
 
@@ -49,7 +49,7 @@ int main(int argc, char const *argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(400, 500, "primitive", nullptr, nullptr);
+    window = glfwCreateWindow(600, 500, "Basic Camera", nullptr, nullptr);
     if(!window) {
         std::cerr << "Unable to create GLFW window" << std::endl;
         return -1;
@@ -67,24 +67,23 @@ int main(int argc, char const *argv[])
     shader.loadFromString(vertexShaderSource, fragmentShaderSource);
     shader.use();
 
-    unsigned int vao, vbo, texture;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &texture);
-
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    auto vao = mhy::createBuffer(mhy::BufferType::VERTEX_ARRAY_OBJECT);
+    mhy::bindBuffer(vao);
+    
+    auto vbo = mhy::createBuffer(mhy::BufferType::VERTEX_BUFFER_OBJECT);
+    auto ibo = mhy::createBuffer(mhy::BufferType::ELEMENT_ARRAY_OBJECT);
 
     float vertices[]{
         0.5f, 0.5f, 0.0f,   1.0f, 1.0f,
         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-
-        0.5f, 0.5f, 0.0f,   1.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
         -0.5f, 0.5f, 0.0f,  0.0f, 1.0f
 
     };
+
+    int indices[] { 0, 1, 2, 0, 2, 3 };
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof indices, indices, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     auto stride = 5 * sizeof(float);
@@ -94,7 +93,7 @@ int main(int argc, char const *argv[])
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, (void*)(3 * sizeof(float)));
 
-    auto woodenImage = mhy::loadImage((mhy::getBackDirectory(__FILE__, 2) + "/assets/images/wooden.jpg"));
+    auto woodenImage = mhy::loadImage((mhy::getBackDirectory(__FILE__, 1) + "/assets/images/wooden.jpg"));
     if(!woodenImage) {
         std::cout << mhy::getInfoLog() << std::endl;
         return -1;
@@ -113,15 +112,12 @@ int main(int argc, char const *argv[])
         glfwPollEvents();
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(0));
         glfwSwapBuffers(window);
     }
 
     std::cout << "Exiting glfw window" << std::endl;
 
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &texture);
     glfwDestroyWindow(window);
     return 0;
 }

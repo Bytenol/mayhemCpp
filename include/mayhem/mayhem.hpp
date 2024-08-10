@@ -7,4 +7,5 @@
 #include <stb_image/stb_image.h>
 
 #include "core.hpp"
+#include "exception.hpp"
 #include "shader.hpp"

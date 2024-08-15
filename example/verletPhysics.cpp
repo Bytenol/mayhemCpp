@@ -7,6 +7,7 @@
 #include <glm/glm/ext.hpp>
 #include <glm/glm/common.hpp>
 #include <mayhem/mayhem.hpp>
+#include "./stoodVerly.h"
 
 
 GLFWwindow* window = nullptr;
@@ -38,52 +39,59 @@ void main() {
 }
 )";
 
-const unsigned int W = 400;
-const unsigned int H = 500;
+const unsigned int W = 500;
+const unsigned int H = 400;
+
 
 
 class Point {
 
-    float ax, ay;
     float mass = 1.0f;
+    vly::Vector gravity { 0.0f, 1.0f };
+    float friction = 0.97f;
+    float groundFriction = 0.97f;
+
+    vly::Vector acc;
+    vly::Vector vel;
 
     public:
-        float x, y, vx, vy;
-        glm::mat4 mModel;
+        vly::Vector pos;
+        vly::Vector oldPos;
+
         Point() = default;
-        Point(float _x, float _y) {
-            x = _x;
-            y = _y;
-            ox = _x;
-            oy = _y;
+
+        Point(const vly::Vector& _pos) {
+            oldPos = _pos;
+            pos = _pos;
         };
 
         void update(float dt) {
-            vx = x - ox;
-            vy = y - oy;
+            vel = pos - oldPos;
 
-            ax = (0.0f) / mass;
-            ay = (70.0f) / mass;
+            oldPos = pos;
+            // vel += calc_force();
+            pos += vel;
+        }
 
-            vx += ax * dt;
-            vy += ay * dt;
-
-            ox = x;
-            oy = y;
-
-            if(y >= H) {
-                ox = x;
-                oy = y;
-                x = ox;
-                // y = H - vy * 0;
+        void constrain() {
+            if(pos.y >= H) {
+                pos.y = H;
             }
-            x += vx * dt;
-            y += vy * dt;
+            if(pos.x <= 0) {
+                pos.x = 0;
+            }
+            if(pos.x >= W) {
+                pos.x = W;
+            }
         }
 
         glm::mat4 getModel() {
-            return glm::translate(glm::mat4(1.0f), glm::vec3(x, y, 0.0f)) *
+            return glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f)) *
                 glm::scale(glm::mat4{1.0f}, glm::vec3{10.0f, 10.0f, 0.0f});
+        }
+
+        vly::Vector calc_acc() {
+            return (gravity) / mass;
         }
 
     private:
@@ -93,28 +101,23 @@ class Point {
 
 class Stick {
     public:
-        float length;
-        int p1, p2;
-        Stick(int _p1, int _p2, float l) {
-            p1 = _p1;
-            p2 = _p2;
+        float length, stiffness = 2.0f;
+        Point* p1 = nullptr;
+        Point* p2 = nullptr;
+
+        Stick(std::vector<Point>& points, int _p1, int _p2, float l) {
+            p1 = &(points[_p1]);
+            p2 = &(points[_p2]);
             length = l;
         }
 
-    void update(std::vector<Point>& points, float dt) {
-        auto& point1 = points[p1];
-        auto& point2 = points[p2];
-
-        auto dx = glm::abs(point1.x - point2.x);
-        auto dy = glm::abs(point1.y - point2.y);
-        auto l = glm::sqrt(dx * dx + dy * dy);
-        auto diff = glm::abs(length - l) * 0.5f;
-        dx /= l;
-        dy /= l;
-        point1.x += dx * diff;
-        point1.y += dy * diff;
-        point1.x -= dx * diff;
-        point1.y -= dy * diff;
+    void update(float dt) {
+        auto dPos = p2->pos - p1->pos;
+        auto norm = dPos.normalize();
+        auto dist = dPos.length();
+        auto diff = (length - dist) / 2;
+        p1->pos += (norm * diff);
+        p2->pos -= (norm * diff);
     }
 };
 
@@ -151,9 +154,17 @@ int main(int argc, char const *argv[])
     auto mProj = glm::ortho(0.0f, static_cast<float>(W), static_cast<float>(H), 0.0f);
     glUniformMatrix4fv(shader.getLocation("mProjection"), 1, false, glm::value_ptr(mProj));
 
-    auto lVbo = mhy::createBuffer(mhy::BufferType::VERTEX_BUFFER_OBJECT);
-    // auto lIbo = mhy::createBuffer(mhy::BufferType::ELEMENT_ARRAY_OBJECT);
-    glBufferData(GL_ARRAY_BUFFER, 1000, nullptr, GL_STREAM_DRAW);
+    auto lvao = mhy::createBuffer(mhy::BufferType::VERTEX_ARRAY_OBJECT);
+    mhy::bindBuffer(lvao);
+    auto lvbo = mhy::createBuffer(mhy::BufferType::VERTEX_BUFFER_OBJECT);
+    float lvertices[]{
+        0.0f, 0.0f,
+        200.0f, 200.0f
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lvertices), lvertices, GL_STREAM_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void*)(0));
+
 
     auto vao = mhy::createBuffer(mhy::BufferType::VERTEX_ARRAY_OBJECT);
     mhy::bindBuffer(vao);
@@ -178,10 +189,10 @@ int main(int argc, char const *argv[])
     glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, (void*)(0));
 
     std::vector<Point> points;
-    points.push_back({ 30.0f, 30.0f });
-    // points.push_back({ 30.0f, 100.0f });
+    points.push_back({ vly::Vector{ 30.0f, 30.0f } });
+    points.push_back({ vly::Vector{130.0f, 100.0f} });
     std::vector<Stick> sticks;
-    // sticks.push_back({ 0, 1, 100.0f });
+    sticks.push_back( Stick{ points, 0, 1, 100.0f });
 
     auto t1 = std::chrono::high_resolution_clock::now().time_since_epoch();
 
@@ -195,32 +206,28 @@ int main(int argc, char const *argv[])
 
         for(auto& point: points) {  
             point.update(dt);
+            point.constrain();
         }
 
         for(auto& stick: sticks) {
-            stick.update(points, dt);
+            // stick.update(dt);
         }
 
         std::vector<float> lines;
         mhy::bindBuffer(vao);
-        mhy::bindBuffer(vbo);
         for(auto& point: points) {
-            lines.push_back(point.x);
-            lines.push_back(point.y);
+            lines.push_back(point.pos.x);
+            lines.push_back(point.pos.y);
             glUniformMatrix4fv(shader.getLocation("mModel"), 1, false, glm::value_ptr(point.getModel()));
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(0));
         }
 
-        mhy::bindBuffer(lVbo);
-        auto res = glm::mat4(1.0f);
-        glUniformMatrix4fv(shader.getLocation("mModel"), 1, false, glm::value_ptr(res));
+        
         for(auto& stick: sticks) {  
             // point.update(dt);
             // glUniformMatrix4fv(shader.getLocation("mModel"), 1, false, glm::value_ptr(point.mModel));
             // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(0));
         }
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * lines.size(), lines.data(), GL_STREAM_DRAW);
-        glDrawArrays(GL_LINES, 0, lines.size());
 
 
 
